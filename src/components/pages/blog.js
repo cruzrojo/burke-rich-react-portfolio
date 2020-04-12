@@ -16,11 +16,11 @@ class Blog extends Component{
     }
 
     this.getBlogItems = this.getBlogItems.bind(this);
-    this.activateInfiniteScroll();
+    this.OnScroll = this.OnScroll.bind(this);
+    window.addEventListener("scroll", this.OnScroll, false);
   }
 
-  activateInfiniteScroll() {
-    window.onscroll = () => {
+  OnScroll() {
       if (this.state.isLoading || 
         this.state.blogItems.length === this.state.totalCount) {
         return;
@@ -31,7 +31,6 @@ class Blog extends Component{
         ) {
           this.getBlogItems();
       }
-    }
   }
 
   getBlogItems() {
@@ -55,6 +54,10 @@ class Blog extends Component{
 
   componentWillMount() {
     this.getBlogItems();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.OnScroll, false);
   }
 
   render() {
