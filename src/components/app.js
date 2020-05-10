@@ -14,8 +14,6 @@ import Auth from "./pages/auth";
 import NoMatch from "./pages/no-match";
 import Icons from "../helpers/icons"
 
-
-
 export default class App extends Component {
   constructor(props) {
     super(props);
