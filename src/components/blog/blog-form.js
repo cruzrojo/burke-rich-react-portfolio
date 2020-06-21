@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import axios from 'axios';
+import axios from "axios";
 import DropzoneComponent from "react-dropzone-component";
 
-import RichTextEditor from "../forms/rich-text-editor"
+import RichTextEditor from "../forms/rich-text-editor";
 
 export default class BlogForm extends Component {
   constructor(props) {
@@ -12,14 +12,16 @@ export default class BlogForm extends Component {
       title: "",
       blog_status: "",
       content: "",
-      featured_image: "",
+      featured_image: ""
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleRichTextEditorChange = this.handleRichTextEditorChange.bind(this);
+    this.handleRichTextEditorChange = this.handleRichTextEditorChange.bind(
+      this
+    );
 
-    this.Config = this.componentConfig.bind(this);
+    this.componentConfig = this.componentConfig.bind(this);
     this.djsConfig = this.djsConfig.bind(this);
     this.handleFeaturedImageDrop = this.handleFeaturedImageDrop.bind(this);
 
@@ -28,23 +30,23 @@ export default class BlogForm extends Component {
 
   componentConfig() {
     return {
-      iconFiletypes: [".jpg", ".png", ".bmp"],
+      iconFiletypes: [".jpg", ".png"],
       showFiletypeIcon: true,
-      postUrl: "https://httpbin.org/post",
-    }
+      postUrl: "https://httpbin.org/post"
+    };
   }
 
   djsConfig() {
     return {
       addRemoveLinks: true,
-      maxFiles: 1,
-    }
+      maxFiles: 1
+    };
   }
 
   handleFeaturedImageDrop() {
     return {
-      addedFile: file => this.setState({featured_image: file })
-    }
+      addedfile: file => this.setState({ featured_image: file })
+    };
   }
 
   handleRichTextEditorChange(content) {
@@ -57,10 +59,10 @@ export default class BlogForm extends Component {
     formData.append("portfolio_blog[title]", this.state.title);
     formData.append("portfolio_blog[blog_status]", this.state.blog_status);
     formData.append("portfolio_blog[content]", this.state.content);
-    
+
     if (this.state.featured_image) {
       formData.append(
-        "portfolio_blog[featured_image]", 
+        "portfolio_blog[featured_image]",
         this.state.featured_image
       );
     }
@@ -69,31 +71,32 @@ export default class BlogForm extends Component {
   }
 
   handleSubmit(event) {
-    axios.post("https://burkemrich.devcamp.space/portfolio/portfolio_blogs",
-    this.buildForm(),
-    { withCredentials: true }
-    )
-    .then(response => {
-      if (this.state.featured_image) {
-        this.featuredImageRef.current.dropzone.removeAllFiles()
+    axios
+      .post(
+        "https://burkemrich.devcamp.space/portfolio/portfolio_blogs",
+        this.buildForm(),
+        { withCredentials: true }
+      )
+      .then(response => {
+        if (this.state.featured_image) {
+          this.featuredImageRef.current.dropzone.removeAllFiles();
         }
 
-      this.setState({
-        title: "",
-        blog_status: "",
-        content: "",
-        featured_image: "",
+        this.setState({
+          title: "",
+          blog_status: "",
+          content: "",
+          featured_image: ""
+        });
+
+        this.props.handleSuccessfullFormSubmission(
+          response.data.portfolio_blog
+        );
+      })
+      .catch(error => {
+        console.log("handleSubmit for blog error", error);
       });
 
-      this.props.handleSuccessfullFormSubmission(
-        response.data.portfolio_blog
-      );
-    })
-    .catch(error => {
-      console.log("handleSubmit for blog error", error);
-    });
-
-    // this.props.handleSuccessfulFormSubmission(this.state);
     event.preventDefault();
   }
 
@@ -102,6 +105,7 @@ export default class BlogForm extends Component {
       [event.target.name]: event.target.value
     });
   }
+
   render() {
     return (
       <form onSubmit={this.handleSubmit} className="blog-form-wrapper">
@@ -113,7 +117,7 @@ export default class BlogForm extends Component {
             placeholder="Blog Title"
             value={this.state.title}
           />
-  
+
           <input
             type="text"
             onChange={this.handleChange}
@@ -124,20 +128,20 @@ export default class BlogForm extends Component {
         </div>
 
         <div className="one-column">
-          <RichTextEditor 
-            handleRichTextEditorChange = {this.handleRichTextEditorChange} 
+          <RichTextEditor
+            handleRichTextEditorChange={this.handleRichTextEditorChange}
           />
         </div>
-        
+
         <div className="image-uploaders">
-        <DropzoneComponent
-          ref={this.featuredImageRef}  
-          config={this.componentConfig()}
-          djsConfig={this.djsConfig()}
-          eventHandlers={this.handleFeaturedImageDrop()}
-        >
-          <div classname="dz-message">Featured Image</div>
-        </DropzoneComponent>
+          <DropzoneComponent
+            ref={this.featuredImageRef}
+            config={this.componentConfig()}
+            djsConfig={this.djsConfig()}
+            eventHandlers={this.handleFeaturedImageDrop()}
+          >
+            <div className="dz-message">Featured Image</div>
+          </DropzoneComponent>
         </div>
 
         <button className="btn">Save</button>
